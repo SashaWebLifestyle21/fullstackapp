@@ -1,0 +1,6 @@
+{
+  "port": 5000,
+  "jwtSecret": "sashaSVETogor",
+  "mongoUri": "mongodb+srv://Sasha:sasha2109@cluster0.6mqetwn.mongodb.net/fsapp?retryWrites=true&w=majority",
+  "apiBaseUrl": "http://localhost:5000/api"
+}
