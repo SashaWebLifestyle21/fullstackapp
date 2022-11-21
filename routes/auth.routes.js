@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import config from "config";
 import {checkAuth} from "../middleware/checkAuth.js";
+import Car from "../models/Car.js";
 const router = new Router()
 
 // /api/user/register
@@ -87,6 +88,12 @@ router.post(
                 { expiresIn: '1h' }
             )
 
+            const wishlist = await Promise.all(
+                user.wishlist.map(car => {
+                    return Car.findById(car)
+                })
+            )
+
             res.json({
                 token,
                 user: {
@@ -94,7 +101,8 @@ router.post(
                 username: user.username,
                 email: user.email,
                 password: user.password,
-                role: user.role
+                role: user.role,
+                wishlist
                 },
                 message: 'Вы вошли в систему'
             })
@@ -122,13 +130,20 @@ router.get(
                 config.get('jwtSecret'),
                 { expiresIn: '1h' }
             )
+            console.log('user ', user)
 
+            const wishlist = await Promise.all(
+                user.wishlist.map(car => {
+                    return Car.findById(car)
+                })
+            )
             res.json({
                 user: {
                     id: user.id,
                     username: user.username,
                     email: user.email,
-                    password: user.password
+                    password: user.password,
+                    wishlist
                 },
                 token,
             })

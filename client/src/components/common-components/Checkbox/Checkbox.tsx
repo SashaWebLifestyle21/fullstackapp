@@ -3,17 +3,21 @@ import React, {useState} from 'react';
 interface ICheckbox {
     checked?: boolean
     name?: string
+    label?: string
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 
-const Checkbox = ({ checked, name, onChange }: ICheckbox) => {
+const Checkbox = ({ checked, name, onChange, label }: ICheckbox) => {
 
     return (
-        <div className={`w-[40px] h-[40px] rounded-full flex items-center justify-center cursor-pointer
-        ${checked ? 'border-2 border-solid border-primary' : 'border-none'}
+        <div className={`rounded-lg flex items-center justify-center cursor-pointer
+        ${checked ? 'border-2 border-solid border-white bg-primary' : 'border-none'}
         `}>
-            <div className={`bg-${name} border-[1px] border-black w-[30px] h-[30px] rounded-full cursor-pointer`}>
+            <div className={`border-[1px] p-[5px] h-[40px] rounded-lg text-center cursor-pointer ${checked ? 'border-none' : 'border-black'}`}>
+                <label className={`cursor-pointer text-center block w-[100%] h-[100%] ${checked ? 'text-white' : 'text-primary'}`}
+                >
+                    {label}
                 <input
                     type='checkbox'
                     name={name}
@@ -21,6 +25,7 @@ const Checkbox = ({ checked, name, onChange }: ICheckbox) => {
                     className='w-[100%] h-[100%] block opacity-0 cursor-pointer'
                     onChange={onChange}
                 />
+                </label>
             </div>
         </div>
     );

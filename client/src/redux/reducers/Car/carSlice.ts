@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../../api/axios/axios";
 
 export interface ICar {
+    _id: string
     brand: string
     model: string
     engine: string
@@ -14,6 +15,7 @@ export interface ICar {
     transmission: string
     price: number
     imgUrl: string
+    pathUrl: string
 }
 
 interface ICarState {
@@ -76,7 +78,6 @@ export const carSlice = createSlice({
         [createCar.fulfilled.type]: (state, action) => {
             state.isLoading = false
             state.status = action.payload.message
-            console.log('action', action.payload)
             state.cars.push(action.payload)
         },
         [createCar.rejected.type]: (state) => {
@@ -88,7 +89,6 @@ export const carSlice = createSlice({
         },
         [getAllCars.fulfilled.type]: (state, action) => {
             state.isLoading = false
-            console.log('cars',action.payload.cars)
             state.cars = action.payload.cars
         },
         [getAllCars.rejected.type]: (state) => {

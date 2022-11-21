@@ -10,7 +10,7 @@ interface IButton {
 const Button = ({ children, className, onClick, disabled }: IButton) => {
     return (
         <button
-            className={`border-none rounded-[5px] cursor-pointer transition duration-300 ease-linear pt-[12px] pb-[12px] pr-[24px] pl-[24px] ${className}`}
+            className={`rounded-[5px] cursor-pointer transition duration-300 ease-linear pt-[12px] pb-[12px] pr-[24px] pl-[24px] ${className}`}
             onClick={onClick}
             disabled={disabled}
         >

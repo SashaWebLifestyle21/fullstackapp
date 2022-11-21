@@ -8,7 +8,7 @@ interface IPrice {
 const Price = ({ children }: IPrice) => {
     return (
         <p className='font-semiBold text-[24px] text-secondary'>
-            {children}
+            ${children}
         </p>
     );
 };

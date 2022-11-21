@@ -1,18 +1,28 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Header from "../Header/Header";
-import {IBook} from "../../redux/service/CardService";
-import Title from "../../components/common-components/Title/Title";
-import Price from "../../components/common-components/Price/Price";
-import Image from "../../components/common-components/Image/Image";
-import Counter from "../../components/common-components/Counter/Counter";
 import { ICar } from '../../redux/reducers/Car/carSlice';
 import Button from "../../components/common-components/Button/Button";
+import RadioButton from "../../components/common-components/RadioButton/RadioButton";
+import {Link} from "react-router-dom";
+import Buy from "../../pages/user/Buy";
 
 interface ICardShop {
     card: ICar
 }
 
 const CardShop = ({ card }: ICardShop) => {
+
+    const [carColor, setCarColor] = useState('')
+
+    const isRadioSelected = (value1: string, value2: string): boolean => {
+        return value1 === value2
+    }
+
+    const handlerBuy = () => {
+        const data = new FormData()
+
+    }
+
     return (
         <>
             <Header img={'../Images/shopback.jpg'} title={'Shop'} />
@@ -66,9 +76,17 @@ const CardShop = ({ card }: ICardShop) => {
                             <p className='text-sm font-medium'>{card.transmission}</p>
                         </div>
                     </div>
-                    <p className={'font-semiBold text-2xl'}>Доступные цвета: </p>
+                    <p className={'font-semiBold text-2xl'}>Выберите цвет: </p>
                     <div className='flex items-center justify-center gap-x-[10px]'>
-                        {card.color.map(color => <p key={color} className='font-semiBold text-xl'>{color}</p>)}
+                        {/*{card.color.map(color => <p key={color} className='font-semiBold text-xl'>{color}</p>)}*/}
+                        {card.color.map(color => <RadioButton
+                            key={color}
+                            label={color}
+                            value={color}
+                            name={color}
+                            checked={isRadioSelected(color, carColor)}
+                            onChange={(e) => setCarColor(e.currentTarget.value)}
+                        />)}
                     </div>
                 </div>
             </div>
@@ -78,10 +96,12 @@ const CardShop = ({ card }: ICardShop) => {
                     &nbsp;
                     ${card.price}
                 </p>
-                <Button className='w-3/6 bg-secondary h-full font-semiBold text-3xl text-white py-[25px] hover:bg-pink-900 hover:font-bold hover:text-4xl'
-                >
-                    Купить
-                </Button>
+
+                    <Button className='w-3/6 bg-secondary h-full font-semiBold text-3xl text-white py-[25px] hover:bg-pink-900 hover:font-bold hover:text-4xl'
+                    >
+                        Купить
+                    </Button>
+
             </div>
         </>
     );

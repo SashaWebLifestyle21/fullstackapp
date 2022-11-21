@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../../api/axios/axios";
 import {TRolesUser} from "../../../constants/rolesUser";
+import {ICar} from "../Car/carSlice";
 
 interface IUser {
     id: number | null
@@ -8,6 +9,7 @@ interface IUser {
     email: string
     password: string
     role: TRolesUser
+    wishlist: ICar[]
 }
 interface UserState {
     currentUser: IUser
@@ -34,7 +36,8 @@ const initialState: UserState = {
         username: '',
         email: '',
         password: '',
-        role: "USER"
+        role: "USER",
+        wishlist: []
     },
     status: null,
     isLoading: false,
@@ -81,6 +84,31 @@ export const loginUser = createAsyncThunk(
         }
     })
 
+export const addCarWishlist = createAsyncThunk(
+    'user/addCarWishlist',
+    async () => {
+        try {
+            const { data } = await axios.get('car/getWishlist')
+            return data
+        } catch (e) {
+            console.log(e)
+        }
+    }
+)
+
+export const removeCarWishlist = createAsyncThunk(
+    'user/removeCarWishlist',
+    async (id: string) => {
+        try {
+            const {data} = await axios.delete(`/car/removeWishlist/${id}`)
+            console.log('rem ', data)
+            return data
+        } catch (e) {
+            console.log(e)
+        }
+    }
+)
+
 export const getMe = createAsyncThunk(
     'user/getMeUser',
     async () => {
@@ -102,7 +130,8 @@ export const userSlice = createSlice({
                 username: '',
                 email: '',
                 password: '',
-                role: "USER"
+                role: "USER",
+                wishlist: []
             }
             state.token = null
             state.isLoading = false
@@ -162,6 +191,32 @@ export const userSlice = createSlice({
         },
         [getMe.rejected.type]: (state, action) => {
             state.status = action.payload
+            state.isLoading = false
+        },
+        // add car wishlist
+        [addCarWishlist.pending.type]: (state) => {
+            state.isLoading = true
+        },
+        [addCarWishlist.fulfilled.type]: (state, action) => {
+            state.isLoading = false
+            console.log('add', action.payload)
+            state.currentUser.wishlist = action.payload
+        },
+        [addCarWishlist.rejected.type]: (state, action) => {
+            state.isLoading = false
+        },
+        // remove car wishlist
+        [removeCarWishlist.pending.type]: (state) => {
+            state.isLoading = true
+        },
+        [removeCarWishlist.fulfilled.type]: (state, action) => {
+            state.isLoading = false
+            state.currentUser.wishlist = state.currentUser.wishlist.filter(
+                (car) => car._id !== action.payload.id,
+            )
+            state.status = action.payload.message
+        },
+        [removeCarWishlist.rejected.type]: (state, action) => {
             state.isLoading = false
         },
     }

@@ -55,7 +55,6 @@ const CreateCar: React.FC = () => {
         const fileList = e.target.files;
 
         if (!fileList) return;
-        console.log(fileList[0])
         setImage(fileList[0]);
     }
 
@@ -80,6 +79,7 @@ const CreateCar: React.FC = () => {
             data.append('power', power)
             data.append('price', price.toString())
             data.append('img', image)
+            data.append('pathUrl', brand.split(' ').join('') + model.split(' ').join(''))
             dispatch(createCar(data))
         } catch (e) {
             console.log(e)
@@ -90,9 +90,14 @@ const CreateCar: React.FC = () => {
         setBrand('')
         setModel('')
         setEngine('')
-        setColors([])
+        setColors(colorsCars)
         setTransmission('')
         setPrice(0)
+        setFuel('')
+        setPower('')
+        setAcceleration('')
+        setDrive('')
+        setImage(null)
     }
 
     return (
@@ -201,6 +206,7 @@ const CreateCar: React.FC = () => {
                             key={color.id}
                             checked={color?.isChecked || false}
                             name={color.color}
+                            label={color.value}
                             onChange={handleColor}
                         />
                     })}

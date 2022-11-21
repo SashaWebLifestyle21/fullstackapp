@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const CarSchema = new mongoose.Schema({
+const BoughtCarSchema = new mongoose.Schema({
     brand: {type: String, required: true},
     model: {type: String, required: true},
     engine: {type: String, required: true},
@@ -9,12 +9,12 @@ const CarSchema = new mongoose.Schema({
     power: {type: String, required: true},
     acceleration: {type: String, required: true},
     drive: {type: String, required: true},
-    color: [{type: String, required: true}],
+    color: {type: String, required: true},
     transmission: {type: String, required: true},
     price: {type: Number, required: true},
-    imgUrl: {type: String, default: ''},    
+    imgUrl: {type: String, default: ''},
     pathUrl: {type: String, default: ''},
-    comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]
+    guarantee: {type: Date, default: Date.now},
 })
 
-export default mongoose.model('Car', CarSchema)
+export default mongoose.model('Car', BoughtCarSchema)
