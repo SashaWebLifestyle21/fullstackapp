@@ -11,7 +11,6 @@ interface IIconsHeader {
 const IconsHeader = ({ logoutHandler, roleUser }: IIconsHeader) => {
     return (
         <div className='flex items-center justify-center gap-x-[20px]'>
-            {roleUser === 'USER' && <Image src='../../Icons/search.svg' alt='search' className='cursor-pointer'/>}
             {roleUser === 'USER' && linksHeader.map(item => {
                 return <Link to={`/${item.href}`} key={item.id}>
                     <Image src={`../../Icons/${item.name}.svg`} alt={item.name} />

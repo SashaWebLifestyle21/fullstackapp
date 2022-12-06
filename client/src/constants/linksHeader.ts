@@ -8,5 +8,10 @@ export const linksHeader = [
         id: 2,
         name: 'cart',
         href: 'cart'
+    },
+    {
+        id: 3,
+        name: 'comment',
+        href: 'comment'
     }
 ]

@@ -1,17 +1,15 @@
 import Car from "../models/Car.js";
 import path, { dirname } from 'path'
 import { fileURLToPath } from "url";
-import fs from 'fs'
 import User from "../models/User.js";
 
 // Create Car
 export const createCar = async (req, res) => {
     try {
-        const { brand, model, engine, color, transmission, price, fuel, power, acceleration, drive, type, pathUrl } = req.body
+        const { brand, model, engine, color, transmission, price, fuel, power, acceleration, count, drive, type, pathUrl } = req.body
         if (!req.files) {
             return res.json({ message: 'Не найдено req.files' })
         }
-        const colorsCar = JSON.parse(color)
         if(req.files) {
             let imgName = `${brand}_${model}.${req.files.img.mimetype.slice(6)}`
 
@@ -28,15 +26,15 @@ export const createCar = async (req, res) => {
                 power,
                 acceleration,
                 drive,
-                color: colorsCar,
+                count,
+                color,
                 transmission,
                 price,
                 imgUrl: imgName,
                 pathUrl
             })
-
             await newCarWithImage.save()
-            return res.json({ message: 'Автомобиль создан' })
+            return res.json({ message: 'Автомобиль создан', car: newCarWithImage })
         }
 
         const newCarWithoutImage = new Car({
@@ -48,7 +46,8 @@ export const createCar = async (req, res) => {
                 power,
                 acceleration,
                 drive,
-                color: colorsCar,
+                color,
+                count,
                 transmission,
                 price,
                 pathUrl,
@@ -56,7 +55,7 @@ export const createCar = async (req, res) => {
         })
 
         await newCarWithoutImage.save()
-        return res.json({ message: 'Автомобиль создан без картинки' })
+        return res.json({ message: 'Автомобиль создан без картинки', car: newCarWithoutImage })
     } catch (error) {
         return res.json({ message: 'Ошибка при создании автомобиля' })
 
@@ -70,58 +69,57 @@ export const getAllCars = async (req, res) => {
         if (!cars) {
             return res.json({ message: 'Нет Автомобилей' })
         }
-
         res.json({ cars })
+
     } catch (e) {
         res.json({ message: 'Ошибка при загрузке автомобилей' })
     }
 }
 
-// Add Car in Wishlist
-export const addWishlist = async (req, res) => {
+// Remove Car
+export const removeCar = async (req, res) => {
+    const { id } = req.params
     try {
-        const car = await Car.findById(req.params.id)
-        const user = await User.findById(req.userId)
+        const car = await Car.findByIdAndDelete(id)
+        if(!car) return res.json({ message: 'Такого автомобиля не существует' })
 
-        if(!user.wishlist.includes(car._id)) {
-            await User.findByIdAndUpdate(req.userId, {
-                $push: { wishlist: car}
-            })
-            res.json({ message: 'Добавлено в понравившиеся' })
-        } else {
-            res.json({ message: 'вы уже добавили этот авто в понравившиеся' })
+        res.json({ message: 'Автомобиль успешно удален' })
+
+    } catch (e) {
+        res.json({ message: 'Ошибка при удалении автомобилей' })
+    }
+}
+
+// Update Car
+export const updateCar = async (req, res) => {
+    try {
+        const { brand, model, engine, color, transmission, price, fuel, power, acceleration, count, drive, type, pathUrl, id } = req.body
+        const car = await Car.findById(id)
+
+        if (req.files) {
+            let imgName = `${brand}_${model}.${req.files.img.mimetype.slice(6)}`
+            const __dirname = dirname(fileURLToPath(import.meta.url))
+            req.files.img.mv(path.join(__dirname, '..', 'public', 'Image', 'Cars', imgName))
+            car.imgUrl = imgName
         }
 
+        car.brand = brand
+        car.model = model
+        car.engine = engine
+        car.color = color
+        car.transmission = transmission
+        car.price = price
+        car.fuel = fuel
+        car.power = power
+        car.acceleration = acceleration
+        car.count = count
+        car.drive = drive
+        car.type = type
+        car.pathUrl = pathUrl
 
+        await car.save()
+        res.json({ car })
     } catch (e) {
-        res.json({ message: 'Ошибка при обавлении в понравившиеся' })
-    }
-}
-
-// get Cars Wishlist
-export const getWishlist = async (req, res) => {
-    try {
-
-        const user = await User.findById(req.userId)
-        const list = await Promise.all(
-            user.wishlist.map(car => {
-                return Car.findById(car)
-            })
-        )
-        res.json(list)
-    } catch (e) {
-        res.json({ message: 'Ошибка при обавлении в понравившиеся' })
-    }
-}
-
-// remove car wishlist
-export const removeCarWishlist = async (req, res) => {
-    try {
-        await User.findByIdAndUpdate(req.userId, {
-            $pull: { wishlist: req.params.id }
-        })
-        res.json({ id: req.params.id, message: 'Автомобиль удален из понравившихся' })
-    } catch (e) {
-        res.json({ message: 'Ошибка при удалении' })
+        res.json({ message: 'Ошибка при обновлении автомобиля' })
     }
 }

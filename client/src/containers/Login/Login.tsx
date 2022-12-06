@@ -78,7 +78,7 @@ const Login = ({ handleLogin }: ILogin) => {
 
     return (
             <div className='w-[411px] m-auto border-2 border-solid border-primary rounded-[15px] p-[15px] mb-[20px]'>
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <Title className='mb-[15px]'>Авторизация</Title>
                 <FormGroup
                     labelName={'email'}

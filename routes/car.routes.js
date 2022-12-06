@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import {createCar, getAllCars, addWishlist, getWishlist, removeCarWishlist} from '../controllers/car.js';
+import {createCar, getAllCars, removeCar, updateCar} from '../controllers/car.js';
 import { checkAuth } from "../middleware/checkAuth.js";
 import fileMiddleware from '../middleware/file.js'
 const router = new Router()
@@ -10,12 +10,10 @@ router.post('/', checkAuth, createCar)
 // get all cars
 router.get('/', getAllCars)
 
-// add car in wishlist
-router.put('/addWishlist/:id', checkAuth, addWishlist)
+// update car
+router.put('/update', updateCar)
 
-//get cars wishlist
-router.get('/getWishlist', checkAuth, getWishlist)
+// update car
+router.delete('/remove/:id', removeCar)
 
-// remove car wishlist
-router.delete('/removeWishlist/:id', checkAuth, removeCarWishlist)
 export default router

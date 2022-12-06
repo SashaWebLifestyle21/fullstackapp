@@ -2,7 +2,6 @@ import React from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import Logo from "../../components/common-components/Logo";
 import Title from "../../components/common-components/Title/Title";
-import Image from "../../components/common-components/Image/Image";
 import {useAppDispatch, useAppSelectors} from "../../hooks/redux";
 import {logout} from "../../redux/reducers/user/userSlice";
 import {toast} from "react-toastify";

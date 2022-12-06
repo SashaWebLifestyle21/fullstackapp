@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../../api/axios/axios";
+import {AxiosRequestConfig} from "axios";
 
 export interface ICar {
     _id: string
@@ -11,9 +12,10 @@ export interface ICar {
     power: string
     acceleration: string
     drive: string
-    color: string[]
+    color: string
     transmission: string
     price: number
+    count: number
     imgUrl: string
     pathUrl: string
 }
@@ -66,6 +68,30 @@ export const getAllCars = createAsyncThunk(
     }
 )
 
+export const updateCar = createAsyncThunk(
+    'car/updateCars',
+    async (updatedCar: any) => {
+        try {
+            const { data } = await axios.put(`/car/update`, updatedCar)
+            return data
+        } catch (e) {
+            console.log(e)
+        }
+    }
+)
+
+
+export const removeCar = createAsyncThunk(
+    'car/removeCar',
+    async (id: any) => {
+    try {
+        const { data } = await axios.delete(`/car/remove/${id}`)
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 export const carSlice = createSlice({
     name: 'car',
     initialState,
@@ -78,7 +104,7 @@ export const carSlice = createSlice({
         [createCar.fulfilled.type]: (state, action) => {
             state.isLoading = false
             state.status = action.payload.message
-            state.cars.push(action.payload)
+            state.cars.push(action.payload.car)
         },
         [createCar.rejected.type]: (state) => {
             state.isLoading = false
@@ -93,7 +119,36 @@ export const carSlice = createSlice({
         },
         [getAllCars.rejected.type]: (state) => {
             state.isLoading = false
-        }
+        },
+        // Update Car
+        [updateCar.pending.type]: (state) => {
+            state.isLoading = true
+        },
+        [updateCar.fulfilled.type]: (state, action) => {
+            console.log('payload ', action.payload)
+            state.isLoading = false
+            const index = state.cars.findIndex(
+                (car) => car._id === action.payload._id,
+            )
+            state.cars[index] = action.payload
+        },
+        [updateCar.rejected.type]: (state) => {
+            state.isLoading = false
+        },
+        // Remove Car
+        [removeCar.pending.type]: (state) => {
+            state.isLoading = true
+        },
+        [removeCar.fulfilled.type]: (state, action) => {
+            console.log('payload ', action.payload)
+            state.isLoading = false
+            state.cars = state.cars.filter(
+                (car) => car._id !== action.payload._id,
+            )
+        },
+        [removeCar.rejected.type]: (state) => {
+            state.isLoading = false
+        },
     }
 })
 

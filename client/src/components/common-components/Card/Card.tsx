@@ -1,34 +1,30 @@
-import React, {useState} from 'react';
-import { ICar } from '../../../redux/reducers/Car/carSlice';
+import React, {useCallback, useState} from 'react';
+import {ICar, removeCar} from '../../../redux/reducers/Car/carSlice';
 import Like from "../Like/Like";
-import axios from "../../../api/axios/axios";
-import {useParams} from 'react-router-dom'
 import {useAppDispatch} from "../../../hooks/redux";
-import {addCarWishlist} from "../../../redux/reducers/user/userSlice";
-import {toast} from "react-toastify";
+import Remove from "../Remove/Remove";
+import axios from "../../../api/axios/axios";
+import {useParams} from "react-router-dom";
 
 interface ICard {
     card: ICar
+    isRemove?: boolean
 }
 
-const Card = ({ card }: ICard) => {
+const Card = ({ card, isRemove = false }: ICard) => {
     const [isActive, setIsActive] = useState(false)
+
     const dispatch = useAppDispatch()
 
-
-    const handleLike = async () => {
-        const {data} = await axios.put(`car/addWishlist/${card._id}`)
-        dispatch(addCarWishlist())
-        console.log('like ', data)
-        toast(data)
-        setIsActive(!isActive)
-    }
+    const handleRemove = useCallback( async () => {
+        dispatch(removeCar(card._id))
+    },[])
 
     return (
         <div className='shadow-md max-w-[280px] w-[100%] p-[30px] bg-white rounded-[20px] hover:bg-grey hover:opacity-80'>
             <div className='flex justify-between items-center mb-[5px]'>
                 <p className='text-primary text-lg font-semiBold'>{card.brand} {card.model}</p>
-                <Like onClick={handleLike} isActive={isActive}/>
+                {isRemove ? <Remove onClick={handleRemove} /> : <Like />}
             </div>
             <p className='text-sm font-semiBold text-gray-600 mb-[16px]'>{card.type}</p>
             {card.imgUrl && (

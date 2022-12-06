@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import Header from "../Header/Header";
 import { ICar } from '../../redux/reducers/Car/carSlice';
 import Button from "../../components/common-components/Button/Button";
-import RadioButton from "../../components/common-components/RadioButton/RadioButton";
-import {Link} from "react-router-dom";
-import Buy from "../../pages/user/Buy";
+import {useAppDispatch} from "../../hooks/redux";
+import {createOrder} from "../../redux/reducers/Order/orderSlice";
+
 
 interface ICardShop {
     card: ICar
@@ -12,26 +12,25 @@ interface ICardShop {
 
 const CardShop = ({ card }: ICardShop) => {
 
-    const [carColor, setCarColor] = useState('')
+    const dispatch = useAppDispatch()
 
-    const isRadioSelected = (value1: string, value2: string): boolean => {
-        return value1 === value2
-    }
-
-    const handlerBuy = () => {
-        const data = new FormData()
-
+    const handlerBuy = async () => {
+        dispatch(createOrder(card._id))
     }
 
     return (
         <>
             <Header img={'../Images/shopback.jpg'} title={'Shop'} />
-            <div className='shadow-lg px-[95px] py-[25px]'>
+            <div className='shadow-lg px-[95px] py-[25px] flex items-center justify-between'>
                 <p className='font-medium text-2xl'>
                     <span className='font-semiBold text-3xl'>{card.brand.toUpperCase()}</span>
                     &nbsp;
                     {card.model}
                 </p>
+                <div className='flex items-center justify-center gap-x-[5px]'>
+                    <div className={`h-[7px] w-[7px] rounded ${card.count === 0 ? 'bg-red' : 'bg-green-500'}`}></div>
+                    {card.count === 0 ? <p>Нет в наличии</p> : <p>В наличии</p>}
+                </div>
             </div>
             <div className='flex items-center p-[5px]'>
                 <div className='w-3/6'>
@@ -76,17 +75,11 @@ const CardShop = ({ card }: ICardShop) => {
                             <p className='text-sm font-medium'>{card.transmission}</p>
                         </div>
                     </div>
-                    <p className={'font-semiBold text-2xl'}>Выберите цвет: </p>
-                    <div className='flex items-center justify-center gap-x-[10px]'>
-                        {/*{card.color.map(color => <p key={color} className='font-semiBold text-xl'>{color}</p>)}*/}
-                        {card.color.map(color => <RadioButton
-                            key={color}
-                            label={color}
-                            value={color}
-                            name={color}
-                            checked={isRadioSelected(color, carColor)}
-                            onChange={(e) => setCarColor(e.currentTarget.value)}
-                        />)}
+                    <div className='flex items-center justify-between gap-x-[60px] mb-[35px]'>
+                        <div className='flex items-center justify-between w-3/6'>
+                            <p className='text-sm font-medium'>Цвет:</p>
+                            <p className='text-sm font-semiBold'>{card.color}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,6 +91,7 @@ const CardShop = ({ card }: ICardShop) => {
                 </p>
 
                     <Button className='w-3/6 bg-secondary h-full font-semiBold text-3xl text-white py-[25px] hover:bg-pink-900 hover:font-bold hover:text-4xl'
+                            onClick={handlerBuy}
                     >
                         Купить
                     </Button>

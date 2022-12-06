@@ -3,13 +3,12 @@ import axios from "../../../api/axios/axios";
 import {TRolesUser} from "../../../constants/rolesUser";
 import {ICar} from "../Car/carSlice";
 
-interface IUser {
-    id: number | null
+export interface IUser {
+    id: string
     username: string
     email: string
     password: string
     role: TRolesUser
-    wishlist: ICar[]
 }
 interface UserState {
     currentUser: IUser
@@ -32,12 +31,11 @@ interface IDataLogin {
 
 const initialState: UserState = {
     currentUser: {
-        id: null,
+        id: '',
         username: '',
         email: '',
         password: '',
         role: "USER",
-        wishlist: []
     },
     status: null,
     isLoading: false,
@@ -126,12 +124,11 @@ export const userSlice = createSlice({
     reducers: {
         logout: (state) => {
             state.currentUser = {
-                id: null,
+                id: '',
                 username: '',
                 email: '',
                 password: '',
                 role: "USER",
-                wishlist: []
             }
             state.token = null
             state.isLoading = false
@@ -191,32 +188,6 @@ export const userSlice = createSlice({
         },
         [getMe.rejected.type]: (state, action) => {
             state.status = action.payload
-            state.isLoading = false
-        },
-        // add car wishlist
-        [addCarWishlist.pending.type]: (state) => {
-            state.isLoading = true
-        },
-        [addCarWishlist.fulfilled.type]: (state, action) => {
-            state.isLoading = false
-            console.log('add', action.payload)
-            state.currentUser.wishlist = action.payload
-        },
-        [addCarWishlist.rejected.type]: (state, action) => {
-            state.isLoading = false
-        },
-        // remove car wishlist
-        [removeCarWishlist.pending.type]: (state) => {
-            state.isLoading = true
-        },
-        [removeCarWishlist.fulfilled.type]: (state, action) => {
-            state.isLoading = false
-            state.currentUser.wishlist = state.currentUser.wishlist.filter(
-                (car) => car._id !== action.payload.id,
-            )
-            state.status = action.payload.message
-        },
-        [removeCarWishlist.rejected.type]: (state, action) => {
             state.isLoading = false
         },
     }

@@ -1,12 +1,18 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./reducers/user/userSlice";
 import carReducer from "./reducers/Car/carSlice";
+import orderReducer from "./reducers/Order/orderSlice";
+import commentReducer from "./reducers/Comment/commentSlice";
+import managerReducer from "./reducers/Manager/managerSlice";
 import { cardAPI } from "./service/CardService";
 
 const rootReducer = combineReducers({
     userReducer,
     [cardAPI.reducerPath]: cardAPI.reducer,
-    carReducer
+    carReducer,
+    orderReducer,
+    commentReducer,
+    managerReducer
 })
 
 export const setupStore = () => {

@@ -18,7 +18,6 @@ const CreateCar: React.FC = () => {
     const { status } = useAppSelectors(state => state.carReducer)
 
     useEffect(() => {
-        setColors(colorsCars);
         if(status) toast(status)
     }, [status]);
 
@@ -30,18 +29,13 @@ const CreateCar: React.FC = () => {
     const [acceleration, setAcceleration] = useState('')
     const [drive, setDrive] = useState('')
     const [price, setPrice] = useState(0)
+    const [count, setCount] = useState(0)
     const [transmission, setTransmission] = useState('АКПП')
-    const [colors, setColors] = useState<IColorsCars[]>([])
+    const [colorCar, setColorCar] = useState('')
     const [image, setImage] = useState<any>(null)
     const [carType, setCarType] = useState('')
 
     const dispatch = useAppDispatch()
-
-    const handleColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target
-        let tempColors = colors.map(color => color.color === name ? { ...color, isChecked: checked } : color)
-        setColors(tempColors)
-    }
 
     const isRadioSelected = (value1: string, value2: string): boolean => {
         return value1 === value2
@@ -60,17 +54,11 @@ const CreateCar: React.FC = () => {
 
     const handleCreateCar = () => {
         try {
-            let colorsCar: string[] = []
-            colors.forEach(item => {
-                if(item.isChecked) {
-                    colorsCar.push(item.value)
-                }
-            })
             const data = new FormData()
             data.append('brand', brand)
             data.append('model', model)
             data.append('transmission', transmission)
-            data.append('color', JSON.stringify(colorsCar))
+            data.append('color', colorCar)
             data.append('engine', engine)
             data.append('drive', drive)
             data.append('type', carType)
@@ -78,8 +66,10 @@ const CreateCar: React.FC = () => {
             data.append('fuel', fuel)
             data.append('power', power)
             data.append('price', price.toString())
+            data.append('count', count.toString())
             data.append('img', image)
             data.append('pathUrl', brand.split(' ').join('') + model.split(' ').join(''))
+            console.log('data model', data)
             dispatch(createCar(data))
         } catch (e) {
             console.log(e)
@@ -90,7 +80,7 @@ const CreateCar: React.FC = () => {
         setBrand('')
         setModel('')
         setEngine('')
-        setColors(colorsCars)
+        setColorCar(colorCar)
         setTransmission('')
         setPrice(0)
         setFuel('')
@@ -199,15 +189,16 @@ const CreateCar: React.FC = () => {
                     selected={carType}
                     setSelected={setCarType}
                 />
-                <div className='flex items-center gap-[10px]'>
-                    <p className='text-primary'>Цвета: </p>
-                    {colors.map(color => {
-                        return <Checkbox
+                <div className='flex items-center flex-wrap gap-[10px]'>
+                    <p className='text-primary'>Цвет: </p>
+                    {colorsCars.map(color => {
+                        return <RadioButton
                             key={color.id}
-                            checked={color?.isChecked || false}
-                            name={color.color}
                             label={color.value}
-                            onChange={handleColor}
+                            name={color.value}
+                            checked={isRadioSelected(color.value, colorCar)}
+                            value={color.value}
+                            onChange={(e) => setColorCar(e.currentTarget.value)}
                         />
                     })}
                 </div>
@@ -242,6 +233,15 @@ const CreateCar: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                <FormGroup
+                    labelName={'count'}
+                    labelText={'Количество'}
+                    inputName={'count'}
+                    inputType={'number'}
+                    placeholder={'7'}
+                    value={count}
+                    onChange={e => setCount(Number(e.currentTarget.value))}
+                />
                 <FormGroup 
                     labelName={'price'}
                     labelText={'Цена'}

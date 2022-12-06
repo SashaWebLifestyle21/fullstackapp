@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 import config from 'config'
 import authRoutes from './routes/auth.routes.js'
 import carRoutes from './routes/car.routes.js'
+import orderRoutes from './routes/order.routes.js'
+import commentRoutes from './routes/comment.routes.js'
+import managerRoutes from './routes/manager.routes.js'
 import cors from 'cors'
 import fileUpload from 'express-fileupload'
 
@@ -16,6 +19,9 @@ app.use(express.static('public'))
 
 app.use('/api/user', authRoutes)
 app.use('/api/car', carRoutes)
+app.use('/api/order', orderRoutes)
+app.use('/api/comment', commentRoutes)
+app.use('/api/manager', managerRoutes)
 
 
 const PORT = config.get('port') || 5000

@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken'
 import config from "config";
 import {checkAuth} from "../middleware/checkAuth.js";
 import Car from "../models/Car.js";
+import Customer from "../models/Customer.js";
+import Manager from "../models/Manager.js";
 const router = new Router()
 
 // /api/user/register
@@ -42,12 +44,27 @@ router.post(
         )
 
         await user.save()
+        if(role === 'USER') {
+            const customer = new Customer({userId: user, })
+            await customer.save()
+            res.status(201).json({
+                user,
+                token,
+                message: 'Пользователь создан'
+            })
+        }
+        if(role === 'MANAGER') {
+            const manager = new Manager({userId: user})
+            await manager.save()
+            res.status(201).json({
+                user,
+                token,
+                message: 'Менеджер создан'
+            })
+        }
 
-        res.status(201).json({
-            user,
-            token,
-            message: 'Пользователь создан'
-        })
+
+
     } catch (e) {
         res.status(500).json({ message: 'Что-то пошло не так' })
     }
@@ -88,12 +105,6 @@ router.post(
                 { expiresIn: '1h' }
             )
 
-            const wishlist = await Promise.all(
-                user.wishlist.map(car => {
-                    return Car.findById(car)
-                })
-            )
-
             res.json({
                 token,
                 user: {
@@ -102,7 +113,6 @@ router.post(
                 email: user.email,
                 password: user.password,
                 role: user.role,
-                wishlist
                 },
                 message: 'Вы вошли в систему'
             })
@@ -130,7 +140,6 @@ router.get(
                 config.get('jwtSecret'),
                 { expiresIn: '1h' }
             )
-            console.log('user ', user)
 
             const wishlist = await Promise.all(
                 user.wishlist.map(car => {

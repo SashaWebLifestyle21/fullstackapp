@@ -1,9 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CreateCar from './CreateCar';
 import Header from '../../containers/Header/Header';
 import ManageMenu from '../../containers/ManageMenu/ManageMenu';
+import {useAppDispatch, useAppSelectors} from "../../hooks/redux";
+import {getAllOrders} from "../../redux/reducers/Order/orderSlice";
 
 const Manage: React.FC = () => {
+
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(getAllOrders())
+    }, [dispatch])
+
     return (
         <div>
             <Header img={'../Images/headerback.jpg'} title='Manage page' />
